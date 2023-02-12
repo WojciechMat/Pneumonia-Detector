@@ -1,5 +1,4 @@
 import argparse
-
 import numpy as np
 from Detector import Detector
 from prepare_input import prepare_input
