@@ -13,8 +13,8 @@ arg.add_argument("--input", help="path to an image")
 mode = arg.parse_args().mode
 img = arg.parse_args().input
 
-train_pth = '../data/train'
-test_pth = '../data/test'
+train_pth = 'data/train'
+test_pth = 'data/test'
 
 batch_size = 32
 n_epoch = 20
