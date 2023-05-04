@@ -1,3 +1,4 @@
 # Pneumonia-Detector
-Pneumonia detection from chest x-ray using Machine Learning </br>
-Work in progress
+Pneumonia detection from chest x-ray using CNN
+model with ~80% accuracy
+to be continued
