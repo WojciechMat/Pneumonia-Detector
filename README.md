@@ -1,4 +1,4 @@
 # Pneumonia-Detector
-Pneumonia detection from chest x-ray using CNN
-model with ~80% accuracy
-to be continued
+Pneumonia detection from chest x-ray using CNN <br>
+model with ~80% accuracy  <br>
+to be continued...
