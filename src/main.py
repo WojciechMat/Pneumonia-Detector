@@ -22,26 +22,26 @@ n_epoch_FT = 25
 
 train_gen = image_dataset_from_directory(
                 train_pth,
-                image_size=(700, 700),
+                image_size=(300, 300),
                 color_mode='grayscale',
                 label_mode='categorical',
                 batch_size=batch_size,
-                smart_resize=1./255
+                smart_resize=1./255,
+                shuffle=True
             )
 test_gen = image_dataset_from_directory(
                 test_pth,
-                image_size=(700, 700),
+                image_size=(300, 300),
                 color_mode='grayscale',
                 label_mode='categorical',
                 batch_size=batch_size,
-                smart_resize=1./255
+                smart_resize=1./255,
+                shuffle=True
             )
 detector = Detector()
 detector.summary()
 if mode == 't':
-    detector.train(lr=0.001, train_db=train_gen, test_db=test_gen, epochs=n_epoch)
-    detector.prepare_for_FT()
-    detector.train(lr=0.0001, train_db=train_gen, test_db=test_gen, epochs=n_epoch_FT)
+    detector.train(lr=0.003, train_db=train_gen, test_db=test_gen, epochs=n_epoch)
     detector.save_weights('detection.h5')
 elif mode == 'r':
     detector.load_weights('detection.h5')

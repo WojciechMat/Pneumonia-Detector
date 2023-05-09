@@ -7,37 +7,25 @@ from keras.utils import image_dataset_from_directory
 
 
 class Detector:
-    __model = Sequential()
 
     def __init__(self):
-        self.__model.add(Conv2D(16, kernel_size=(3, 3), input_shape=(700, 700, 1), activation='relu'))
+        self.__model = Sequential([
+            Conv2D(32, kernel_size=(3, 3), input_shape=(300, 300, 1), activation='relu'),
+            Conv2D(32, kernel_size=(3, 3), activation="relu"),
+            AveragePooling2D(5, 5),
+            Conv2D(64, kernel_size=(3, 3), activation="relu"),
+            AveragePooling2D(5, 5),
+            Conv2D(64, kernel_size=(3, 3), activation="relu"),
+            MaxPooling2D(2, 2),
+            Flatten(),
 
-        self.__model.add(Conv2D(16, kernel_size=(3, 3), activation='relu'))
-        self.__model.add(Dropout(0.4))
+            Dense(32, activation='relu'),
+            Dense(16, activation='relu'),
+            Dense(16, activation='relu'),
+            Dense(8, activation='relu'),
+            Dense(2, activation='softmax')
+        ])
 
-        self.__model.add(AveragePooling2D(7, 7))
-        self.__model.add(Conv2D(32, kernel_size=(3, 3), activation='relu'))
-        self.__model.add(Dropout(0.4))
-
-        self.__model.add(BatchNormalization())
-
-        self.__model.add(AveragePooling2D(7, 7))
-        self.__model.add(Dropout(0.3))
-        self.__model.add(Conv2D(32, kernel_size=(3, 3)))
-
-        self.__model.add(MaxPooling2D(4, 4))
-
-        self.__model.add(Flatten())
-        self.__model.add(Dense(32, activation='relu'))
-        self.__model.add(Dropout(0.2))
-        self.__model.add(Dense(32, activation='relu'))
-        self.__model.add(Dropout(0.5))
-        self.__model.add(Dense(16, activation='relu'))
-        self.__model.add(Dense(2, activation='softmax'))
-
-        self.__model.layers[14].trainable = False
-        self.__model.layers[15].trainable = False
-        self.__model.layers[16].trainable = False
 
     def model(self) -> Sequential():
         return self.__model

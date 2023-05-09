@@ -7,7 +7,7 @@ def prepare_input(img_path):
         np.expand_dims(
             cv2.resize(
                 cv2.cvtColor(cv2.imread(img_path), cv2.COLOR_BGR2GRAY),
-                (700, 700)
+                (300, 300)
             ),
             -1
         ),
