@@ -4,13 +4,32 @@ import torch.nn as nn
 from tqdm import tqdm
 import torch.optim as optim
 from omegaconf import DictConfig
+from torch.utils.data import DataLoader
 
 import wandb
 from model import PneumoniaModel
 from data_loader import get_data_loaders
 
 
-def train_model(train_loader, val_loader, config, epochs, learning_rate, device):
+def train_model(
+    train_loader: DataLoader,
+    val_loader: DataLoader,
+    config: DictConfig,
+    epochs: int,
+    learning_rate: float,
+    device: torch.device,
+):
+    """
+    Train the pneumonia detection model.
+
+    Args:
+        train_loader (DataLoader): DataLoader for the training dataset.
+        val_loader (DataLoader): DataLoader for the validation dataset.
+        config (DictConfig): Configuration dictionary.
+        epochs (int): Number of training epochs.
+        learning_rate (float): Learning rate for the optimizer.
+        device (torch.device): Device to run the training on (CPU or GPU).
+    """
     wandb.init(project="pneumonia-detection", name=config.run_name, config=config)
     model = PneumoniaModel(config.model).to(device)
     criterion = nn.BCELoss()
@@ -19,6 +38,7 @@ def train_model(train_loader, val_loader, config, epochs, learning_rate, device)
 
     best_accuracy = 0.0
     checkpoint_path = hydra.utils.to_absolute_path(f"../checkpoints/{config.run_name}.pth")
+
     for epoch in range(epochs):
         model.train()
         running_loss = 0.0
@@ -48,7 +68,22 @@ def train_model(train_loader, val_loader, config, epochs, learning_rate, device)
                     torch.save(checkpoint, checkpoint_path)
 
 
-def evaluate_model(model, val_loader, device):
+def evaluate_model(
+    model: nn.Module,
+    val_loader: DataLoader,
+    device: torch.device,
+):
+    """
+    Evaluate the model on the validation dataset.
+
+    Args:
+        model (nn.Module): The trained PyTorch model.
+        val_loader (DataLoader): DataLoader for the validation dataset.
+        device (torch.device): Device to run the evaluation on (CPU or GPU).
+
+    Returns:
+        float: Accuracy of the model on the validation dataset.
+    """
     model.eval()
     correct = 0
     total = 0
@@ -66,6 +101,12 @@ def evaluate_model(model, val_loader, device):
 
 @hydra.main(config_name="config", config_path="configs", version_base=None)
 def main(config: DictConfig):
+    """
+    Main function to run the training script.
+
+    Args:
+        config (DictConfig): Configuration dictionary.
+    """
     train_loader, val_loader = get_data_loaders(
         batch_size=config.training.batch_size,
         train_dir=config.training.train_dir,
