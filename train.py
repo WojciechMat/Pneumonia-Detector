@@ -37,7 +37,7 @@ def train_model(
     log_steps = config.logging.steps
 
     best_accuracy = 0.0
-    checkpoint_path = hydra.utils.to_absolute_path(f"../checkpoints/{config.run_name}.pth")
+    checkpoint_path = hydra.utils.to_absolute_path(f"checkpoints/{config.run_name}.pth")
 
     for epoch in range(epochs):
         model.train()
