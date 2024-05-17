@@ -1,5 +1,6 @@
 defaults:
   - model: basic
+  - transforms: basic
 
 training:
   batch_size: 32
@@ -7,12 +8,6 @@ training:
   learning_rate: 0.001
   train_dir: 'data/train'
   val_dirs: ['data/val', 'data/test']
-
-transforms:
-  resize: [300, 300]
-  normalize:
-    mean: [0.5]
-    std: [0.5]
 
 logging:
   steps: 10
