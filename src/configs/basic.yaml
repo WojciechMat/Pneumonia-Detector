@@ -1,0 +1,26 @@
+model:
+  conv_layers:
+    - out_channels: 32
+      kernel_size: 3
+    - out_channels: 64
+      kernel_size: 3
+  dense_layers:
+    - 128
+    - 64
+  input_shape: ${transforms.resize}
+
+training:
+  batch_size: 32
+  epochs: 50
+  learning_rate: 0.001
+  train_dir: 'data/train'
+  val_dirs: ['data/val', 'data/test']
+
+transforms:
+  resize: [300, 300]
+  normalize:
+    mean: [0.5]
+    std: [0.5]
+
+logging:
+  steps: 10
