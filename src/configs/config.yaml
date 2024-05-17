@@ -4,10 +4,12 @@ defaults:
 
 training:
   batch_size: 32
-  epochs: 50
+  epochs: 10
   learning_rate: 0.001
   train_dir: 'data/train'
-  val_dirs: ['data/val', 'data/test']
+  val_dirs: ['data/val']
 
 logging:
   steps: 10
+
+run_name: pd-${now:%Y-%m-%d-%H-%M}

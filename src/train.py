@@ -11,12 +11,14 @@ from data_loader import get_data_loaders
 
 
 def train_model(train_loader, val_loader, config, epochs, learning_rate, device):
-    wandb.init(project="pneumonia-detection", config=config)
+    wandb.init(project="pneumonia-detection", name=config.run_name, config=config)
     model = PneumoniaModel(config.model).to(device)
     criterion = nn.BCELoss()
     optimizer = optim.Adam(model.parameters(), lr=learning_rate)
     log_steps = config.logging.steps
 
+    best_accuracy = 0.0
+    checkpoint_path = hydra.utils.to_absolute_path(f"../checkpoints/{config.run_name}.pth")
     for epoch in range(epochs):
         model.train()
         running_loss = 0.0
@@ -36,7 +38,14 @@ def train_model(train_loader, val_loader, config, epochs, learning_rate, device)
                 val_accuracy = evaluate_model(model, val_loader, device)
                 wandb.log({"epoch": epoch + 1, "validation/accuracy": val_accuracy})
 
-    torch.save(model.state_dict(), "models/pneumonia_model.pth")
+                # Save checkpoint if the accuracy improves
+                if val_accuracy > best_accuracy:
+                    best_accuracy = val_accuracy
+                    checkpoint = {
+                        "model": model.state_dict(),
+                        "config": config,
+                    }
+                    torch.save(checkpoint, checkpoint_path)
 
 
 def evaluate_model(model, val_loader, device):
