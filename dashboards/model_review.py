@@ -48,7 +48,7 @@ def evaluate_model(model, val_loader):
 
 def main():
     st.title("Confusion Matrix for Pneumonia Detection Model Checkpoints")
-    checkpoint_files = [f for f in glob.glob("../checkpoints/*.pth")]
+    checkpoint_files = [f for f in glob.glob("checkpoints/*.pth")]
 
     checkpoint_path = st.selectbox("Select Checkpoint", checkpoint_files)
 
