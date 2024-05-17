@@ -1,0 +1,13 @@
+conv_layers:
+  - out_channels: 64
+    kernel_size: 3
+  - out_channels: 128
+    kernel_size: 3
+  - out_channels: 256
+    kernel_size: 3
+  - out_channels: 512
+    kernel_size: 3
+dense_layers:
+  - 1024
+  - 512
+  - 256

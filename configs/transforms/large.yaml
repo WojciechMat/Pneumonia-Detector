@@ -1,0 +1,4 @@
+resize: [600, 600]
+normalize:
+  mean: [0.5]
+  std: [0.5]
