@@ -52,11 +52,10 @@ def evaluate_model(model, val_loader, device):
             correct += (predicted == labels).sum().item()
 
     accuracy = 100 * correct / total
-    print(f"Validation Accuracy: {accuracy}%")
     return accuracy
 
 
-@hydra.main(config_name="basic", config_path="configs", version_base=None)
+@hydra.main(config_name="config", config_path="configs", version_base=None)
 def main(config: DictConfig):
     train_loader, val_loader = get_data_loaders(
         batch_size=config.training.batch_size,

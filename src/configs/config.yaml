@@ -1,13 +1,5 @@
-model:
-  conv_layers:
-    - out_channels: 32
-      kernel_size: 3
-    - out_channels: 64
-      kernel_size: 3
-  dense_layers:
-    - 128
-    - 64
-  input_shape: ${transforms.resize}
+defaults:
+  - model: basic
 
 training:
   batch_size: 32
