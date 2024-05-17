@@ -3,7 +3,7 @@ import torch
 import torch.nn as nn
 from tqdm import tqdm
 import torch.optim as optim
-from omegaconf import DictConfig
+from omegaconf import DictConfig, OmegaConf
 from torch.utils.data import DataLoader
 
 import wandb
@@ -30,7 +30,10 @@ def train_model(
         learning_rate (float): Learning rate for the optimizer.
         device (torch.device): Device to run the training on (CPU or GPU).
     """
-    wandb.init(project="pneumonia-detection", name=config.run_name, config=config)
+    serializable_config = config
+    serializable_config.run_name = None
+    conf = OmegaConf.to_object(serializable_config)
+    wandb.init(project="pneumonia-detection", name=config.run_name, config=conf)
     model = PneumoniaModel(config.model).to(device)
     criterion = nn.BCELoss()
     optimizer = optim.Adam(model.parameters(), lr=learning_rate)

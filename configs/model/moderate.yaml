@@ -8,3 +8,4 @@ conv_layers:
 dense_layers:
   - 128
   - 64
+input_shape: ${transforms.resize}

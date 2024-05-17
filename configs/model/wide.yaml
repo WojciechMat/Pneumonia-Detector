@@ -11,3 +11,4 @@ dense_layers:
   - 1024
   - 512
   - 256
+input_shape: ${transforms.resize}
