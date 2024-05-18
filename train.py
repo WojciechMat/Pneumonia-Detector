@@ -3,8 +3,8 @@ import torch
 import torch.nn as nn
 from tqdm import tqdm
 import torch.optim as optim
-from omegaconf import DictConfig, OmegaConf
 from torch.utils.data import DataLoader
+from omegaconf import DictConfig
 
 import wandb
 from model import PneumoniaModel
@@ -30,16 +30,19 @@ def train_model(
         learning_rate (float): Learning rate for the optimizer.
         device (torch.device): Device to run the training on (CPU or GPU).
     """
-    serializable_config = config
-    serializable_config.run_name = None
-    conf = OmegaConf.to_object(serializable_config)
-    wandb.init(project="pneumonia-detection", name=config.run_name, config=conf)
+    serializable_config = dict(config)
+    serializable_config["run_name"] = None
+    wandb.init(
+        project="pneumonia-detection",
+        name=config.run_name,
+        config=serializable_config,
+    )
     model = PneumoniaModel(config.model).to(device)
     criterion = nn.BCELoss()
     optimizer = optim.Adam(model.parameters(), lr=learning_rate)
     log_steps = config.logging.steps
 
-    best_accuracy = 0.0
+    best_loss = 10000.0
     checkpoint_path = hydra.utils.to_absolute_path(f"checkpoints/{config.run_name}.pth")
 
     for epoch in range(epochs):
@@ -58,12 +61,12 @@ def train_model(
                 avg_loss = running_loss / log_steps
                 wandb.log({"epoch": epoch + 1, "step": step + 1, "train/loss": avg_loss})
                 running_loss = 0.0
-                val_accuracy = evaluate_model(model, val_loader, device)
-                wandb.log({"epoch": epoch + 1, "validation/accuracy": val_accuracy})
+                val_accuracy, val_loss = evaluate_model(model, val_loader, device, criterion)
+                wandb.log({"epoch": epoch + 1, "validation/accuracy": val_accuracy, "validation/loss": val_loss})
 
                 # Save checkpoint if the accuracy improves
-                if val_accuracy > best_accuracy:
-                    best_accuracy = val_accuracy
+                if val_loss < best_loss:
+                    best_loss = val_loss
                     checkpoint = {
                         "model": model.state_dict(),
                         "config": config,
@@ -75,6 +78,7 @@ def evaluate_model(
     model: nn.Module,
     val_loader: DataLoader,
     device: torch.device,
+    criterion,
 ):
     """
     Evaluate the model on the validation dataset.
@@ -90,16 +94,21 @@ def evaluate_model(
     model.eval()
     correct = 0
     total = 0
+    running_loss = 0
     with torch.no_grad():
         for images, labels in val_loader:
             images, labels = images.to(device), labels.float().to(device)
             outputs = model(images)
+            loss = criterion(outputs.squeeze(), labels)
+            running_loss += loss.item()
             predicted = outputs.round().squeeze()
             total += labels.size(0)
             correct += (predicted == labels).sum().item()
 
     accuracy = 100 * correct / total
-    return accuracy
+    val_loss = running_loss / total
+    model.train()
+    return accuracy, val_loss
 
 
 @hydra.main(config_name="config", config_path="configs", version_base=None)
