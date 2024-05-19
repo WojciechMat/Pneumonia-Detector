@@ -100,7 +100,7 @@ def main():
     transform = transforms.Compose(transform_list)
 
     # Load the validation dataset
-    val_dataset = PneumoniaDataset(root_dir="data/test", transform=transform)
+    val_dataset = PneumoniaDataset(root_dir="data/val", transform=transform)
     val_loader = torch.utils.data.DataLoader(val_dataset, batch_size=32, shuffle=False)
 
     # Display configuration details
