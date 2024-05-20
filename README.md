@@ -14,8 +14,6 @@ defaults:
   - model: simple
   - transforms: default
 
-model_config: ${model}
-transform_config: ${transforms}
 training:
   batch_size: 32
   epochs: 10
